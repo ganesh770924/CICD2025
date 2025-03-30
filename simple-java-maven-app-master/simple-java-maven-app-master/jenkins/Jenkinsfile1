@@ -1,1 +1,13 @@
+pieline{
+  agent{" AWS-EC2-Agent"}
+  stages{
+    stage("checkout-stage"){
+       git branch: 'main', url: 'https://github.com/ganesh770924/CICD2025.git'
+     }
+    stage("Maven build stage"){
+       
+   
+    }
+  }
 
+}
