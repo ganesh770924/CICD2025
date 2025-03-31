@@ -27,7 +27,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube-Server') { // Reference the configured SonarQube server in Jenkins
+                withSonarQubeEnv('$SONARQUBE_SERVER') { // Reference the configured SonarQube server in Jenkins
                     sh 'mvn sonar:sonar'
                 }
             }
