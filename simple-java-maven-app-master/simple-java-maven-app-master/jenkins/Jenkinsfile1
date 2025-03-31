@@ -15,7 +15,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git 'git branch: 'main', url: 'https://github.com/ganesh770924/CICD2025.git' // Replace with your repository URL
+                  git branch: 'main', url: 'https://github.com/ganesh770924/CICD2025.git' // Replace with your repository URL
             }
         }
 
@@ -27,7 +27,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('$SONARQUBE_SERVER') { // Reference the configured SonarQube server in Jenkins
+                withSonarQubeEnv('My-SonarQube-Server') { // Reference the configured SonarQube server in Jenkins
                     sh 'mvn sonar:sonar'
                 }
             }
