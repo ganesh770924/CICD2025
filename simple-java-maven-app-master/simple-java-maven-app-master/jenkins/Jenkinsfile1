@@ -1,13 +1,72 @@
-pieline{
-  agent{" AWS-EC2-Agent"}
-  stages{
-    stage("checkout-stage"){
-       git branch: 'main', url: 'https://github.com/ganesh770924/CICD2025.git'
-     }
-    stage("Maven build stage"){
-       
-   
-    }
-  }
+pipeline {
+    agent any
 
+    tools {
+        maven 'Maven' // Reference the Maven installation in Jenkins
+    }
+
+    environment {
+        AWS_REGION = 'us-east-1' // Replace with your AWS region
+        ECR_REPO = '775723212216.dkr.ecr.us-east-1.amazonaws.com/dev/demo-project' // Replace with your ECR repository URI
+        IMAGE_TAG = 'latest' // Define the tag for the Docker image
+        SONARQUBE_SERVER = 'My-SonarQube-Server' // Replace with your SonarQube server name
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git 'git branch: 'main', url: 'https://github.com/ganesh770924/CICD2025.git' // Replace with your repository URL
+            }
+        }
+
+        stage('Build with Maven') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube-Server') { // Reference the configured SonarQube server in Jenkins
+                    sh 'mvn sonar:sonar'
+                }
+            }
+        }
+
+        stage('Run Unit Tests') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh """
+                    docker build -t $ECR_REPO:$IMAGE_TAG .
+                    """
+                }
+            }
+        }
+
+        stage('Login to Amazon ECR') {
+            steps {
+                script {
+                    sh """
+                    aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPO
+                    """
+                }
+            }
+        }
+
+        stage('Push Docker Image to ECR') {
+            steps {
+                script {
+                    sh """
+                    docker push $ECR_REPO:$IMAGE_TAG
+                    """
+                }
+            }
+        }
+    }
 }
