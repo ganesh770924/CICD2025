@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven' // Reference the Maven installation in Jenkins
+        maven 'MAVEN' // Reference the Maven installation in Jenkins
     }
 
     environment {
